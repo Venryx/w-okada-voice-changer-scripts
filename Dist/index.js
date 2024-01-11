@@ -150,25 +150,7 @@ var _launcherJs = require("./Launcher.js");
 },{"./MyStartupTweaks.js":"dcnev","./Launcher.js":"766Dn","./AddDirectFileConvertButtons.js":"dVd8y"}],"dcnev":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-/*function PlayInputAndRecordToFile() {
-	const chunkSelectEl = FindHTMLElementsMatching(".config-sub-area-control-title").find(a=>a.innerText == "CHUNK:")?.nextSibling?.childNodes[0] as HTMLSelectElement;
-	const chunkSelectInfo = (chunkSelectEl.childNodes[chunkSelectEl.selectedIndex] as HTMLOptionElement).innerText;
-	const chunkDelay = Number(chunkSelectInfo.match(/([0-9.]+) ms/)![1]);
-	console.log("ChunkDelay:", chunkDelay);
-
-	const audioInputFileEl = document.querySelector("#audio-test-converted") as HTMLAudioElement;
-	const buttons = FindHTMLElementsMatching(".config-sub-area-button, .config-sub-area-button-active");
-	const startRecordButton = buttons[1];
-	const stopRecordButton = buttons[2];
-
-	audioInputFileEl.currentTime = 0;
-	audioInputFileEl.play();
-	setTimeout(()=>startRecordButton.click(), chunkDelay);
-	audioInputFileEl.onended = ()=>{
-		audioInputFileEl.onended = null;
-		setTimeout(()=>stopRecordButton.click(), chunkDelay);
-	};
-}*/ parcelHelpers.export(exports, "ApplyMyStartupTweaks", ()=>ApplyMyStartupTweaks);
+parcelHelpers.export(exports, "ApplyMyStartupTweaks", ()=>ApplyMyStartupTweaks);
 var _generalJs = require("./Utils/General.js");
 function Setup() {
     (0, _generalJs.FindHTMLElementsMatching)(".model-slot-sort-button, .model-slot-sort-button-active")[1].click();
@@ -199,7 +181,6 @@ function Setup() {
 }
 function ApplyMyStartupTweaks() {
     Setup();
-    //setTimeout(()=>PlayInputAndRecordToFile(), 2000);
     // temp; let user type+enter "t" in console to reapply the startup tweaks (needed for some tweaks, eg. rvc-quality that gets reset on changing the voice)
     Object.defineProperty(window, "t", {
         configurable: true,

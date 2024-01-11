@@ -32,3 +32,7 @@ Changes:
 * Adds a "Convert loaded file" button; like the one above, except uses the file loaded as the "input:file" content within the audio->client control group.
 
 ![Screenshot](Images/DirectFileConvertButtons.png)
+
+## Tasks
+
+* [ ] Simplify the direct file-conversion functions to avoid the unnecessary i16->f32->16 conversion chain (after receiving the converted audio from the backend).
