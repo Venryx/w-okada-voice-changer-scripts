@@ -9,7 +9,7 @@ async function DecodeFileToAudioBuffer(file) {
 	return decodedData;
 }
 
-function DownloadFloat32ArrayAsWAV(data) {
+function DownloadFloat32ArrayAsWAV(data, fileName = "output.wav") {
 	const writeString = (view, offset, string)=>{
 		for (var i = 0; i < string.length; i++) {
 			view.setUint8(offset + i, string.charCodeAt(i));
@@ -39,7 +39,7 @@ function DownloadFloat32ArrayAsWAV(data) {
 	const url = URL.createObjectURL(audioBlob);
 	const a = document.createElement("a");
 	a.href = url;
-	a.download = `output.wav`;
+	a.download = fileName;
 	document.body.appendChild(a);
 	a.click();
 	document.body.removeChild(a);
@@ -99,7 +99,14 @@ async function Convert(fileBlob: Blob, flushStartWithXChunks = 1) {
 	}
 	const f32Data_combinedArray = FlattenFloat32Arrays(f32DataSubarrays);
 
-	DownloadFloat32ArrayAsWAV(f32Data_combinedArray);
+	let fileName = "output.wav";
+	if (fileBlob instanceof File) {
+		const lastDotIndex = fileBlob.name.lastIndexOf(".");
+		const [fileName_noExt, ext] = lastDotIndex == -1 ? [fileBlob.name, ""] : [fileBlob.name.slice(0, lastDotIndex), fileBlob.name.slice(lastDotIndex + 1)];
+		fileName = `${fileName_noExt}.wav`;
+	}
+
+	DownloadFloat32ArrayAsWAV(f32Data_combinedArray, fileName);
 	console.log("Done in:", Date.now() - startTime);
 }
 
