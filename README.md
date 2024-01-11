@@ -23,7 +23,7 @@ If one or more of these scripts have behavior you do not want, you can avoid act
 Changes:
 * Allows voice list to expand taller.
 * Reduces margin between the control groups.
-* Sets the "RVC Quality" for the currently-selected voice to "High". (resets to "Low" if voice is changed; you can reapply by executing `t` in console)
+* Auto-sets the "RVC Quality" (in Advanced Settings panel) to "High". (set on script init, and whenever the voice is changed)
 
 ### AddDirectFileConvertButtons
 
