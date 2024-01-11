@@ -151,7 +151,28 @@ var _launcherJs = require("./Launcher.js");
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ApplyMyStartupTweaks", ()=>ApplyMyStartupTweaks);
+var _appSpecificJs = require("./Utils/AppSpecific.js");
 var _generalJs = require("./Utils/General.js");
+async function SetRVCQuality(quality) {
+    console.log("Setting RVC quality to:", quality);
+    await fetch("http://localhost:18888/update_settings", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+            "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryuhTAAoBfkhLFQciO",
+            "cache-control": "no-cache",
+            pragma: "no-cache"
+        },
+        body: [
+            `------WebKitFormBoundaryuhTAAoBfkhLFQciO\r\nContent-Disposition: form-data;`,
+            ` name="key"\r\n\r\nrvcQuality\r\n------WebKitFormBoundaryuhTAAoBfkhLFQciO\r\nContent-Disposition: form-data;`,
+            ` name="val"\r\n\r\n${quality}\r\n------WebKitFormBoundaryuhTAAoBfkhLFQciO--\r\n`
+        ].join("")
+    });
+    // this part doesn't actually change quality-setting, but makes ui match with the quality-setting set by fetch above
+    const rvcQualitySelectEl = (0, _generalJs.FindHTMLElementsMatching)(".advanced-setting-container-row-title").find((a)=>a.innerText == "RVC Quality")?.nextSibling?.childNodes[0];
+    rvcQualitySelectEl.selectedIndex = 1;
+}
 function Setup() {
     (0, _generalJs.FindHTMLElementsMatching)(".model-slot-sort-button, .model-slot-sort-button-active")[1].click();
     if (document.querySelector("#style1") == null) {
@@ -165,19 +186,22 @@ function Setup() {
 	  .config-area { padding: 10px !important; }
 	  .model-slot-tiles-container { max-height: 32rem !important; }
 	`;
-    fetch("http://localhost:18888/update_settings", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-            "content-type": "multipart/form-data; boundary=----WebKitFormBoundaryuhTAAoBfkhLFQciO",
-            "cache-control": "no-cache",
-            pragma: "no-cache"
-        },
-        body: '------WebKitFormBoundaryuhTAAoBfkhLFQciO\r\nContent-Disposition: form-data; name="key"\r\n\r\nrvcQuality\r\n------WebKitFormBoundaryuhTAAoBfkhLFQciO\r\nContent-Disposition: form-data; name="val"\r\n\r\n1\r\n------WebKitFormBoundaryuhTAAoBfkhLFQciO--\r\n'
-    });
-    // this part doesn't actually change quality-setting, but makes ui match with the quality-setting set by fetch above
-    const rvcQualitySelectEl = (0, _generalJs.FindHTMLElementsMatching)(".advanced-setting-container-row-title").find((a)=>a.innerText == "RVC Quality")?.nextSibling?.childNodes[0];
-    rvcQualitySelectEl.selectedIndex = 1;
+    // on init, set RVC quality to High
+    SetRVCQuality(1);
+    // also, set RVC quality to High again, whenever the voice is changed
+    (0, _generalJs.FindHTMLElementsMatching)(".model-slot-tiles-container")[0].onclick = async (e)=>{
+        const oldVoice = (0, _appSpecificJs.GetCurrentVoiceName)();
+        const target = e.target;
+        const clickedOnVoice = !target.className.includes("model-slot-tiles-container"); // if we didn't click directly on background, we must have clicked on a voice
+        if (clickedOnVoice) for(let i = 0; i < 10; i++){
+            await (0, _generalJs.SleepAsync)(1000);
+            // once ui has updated to show the new voice (ie. after the voice is actually loaded by backend), we can set the quality to High again
+            if ((0, _appSpecificJs.GetCurrentVoiceName)() != oldVoice) {
+                SetRVCQuality(1);
+                break;
+            }
+        }
+    };
 }
 function ApplyMyStartupTweaks() {
     Setup();
@@ -191,17 +215,23 @@ function ApplyMyStartupTweaks() {
     console.log("Applied startup tweaks.");
 }
 
-},{"./Utils/General.js":"adrA1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"adrA1":[function(require,module,exports) {
+},{"./Utils/General.js":"adrA1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./Utils/AppSpecific.js":"2fzJN"}],"adrA1":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "FindHTMLElementsMatching", ()=>FindHTMLElementsMatching);
 parcelHelpers.export(exports, "FindElementsMatching", ()=>FindElementsMatching);
+parcelHelpers.export(exports, "SleepAsync", ()=>SleepAsync);
 /** If the dialog is closed/canceled, the promise will just never resolve. */ parcelHelpers.export(exports, "StartUpload", ()=>StartUpload);
 function FindHTMLElementsMatching(selector) {
     return FindElementsMatching(selector);
 }
 function FindElementsMatching(selector) {
     return Array.from(document.querySelectorAll(selector));
+}
+function SleepAsync(timeMS) {
+    return new Promise((resolve, reject)=>{
+        setTimeout(resolve, timeMS);
+    });
 }
 function StartUpload() {
     return new Promise((resolve, reject)=>{
@@ -247,7 +277,71 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"dVd8y":[function(require,module,exports) {
+},{}],"2fzJN":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// app state
+// ==========
+// these are of course extremely hacky; just use them for exploration/experimentation
+parcelHelpers.export(exports, "GetAppState", ()=>GetAppState);
+parcelHelpers.export(exports, "GetAppActions", ()=>GetAppActions);
+// ui reading
+// ==========
+parcelHelpers.export(exports, "GetCurrentVoiceName", ()=>GetCurrentVoiceName);
+parcelHelpers.export(exports, "GetChunkSizeInBytes", ()=>GetChunkSizeInBytes);
+parcelHelpers.export(exports, "GetExtraSizeInBytes", ()=>GetExtraSizeInBytes);
+parcelHelpers.export(exports, "GetRecordButtonsContainer", ()=>GetRecordButtonsContainer);
+parcelHelpers.export(exports, "GetVoiceConversionButtonsContainer", ()=>GetVoiceConversionButtonsContainer);
+// ui actions
+// ==========
+parcelHelpers.export(exports, "StopRegularVoiceConversion", ()=>StopRegularVoiceConversion);
+parcelHelpers.export(exports, "StopAudioInputFilePlayback", ()=>StopAudioInputFilePlayback);
+var _generalJs = require("./General.js");
+function GetAppState() {
+    const portraitAreaFiber = Object.entries(document.querySelector(".portrait-area") ?? []).find((a)=>a[0].includes("__reactFiber$"))?.[1];
+    const appState = portraitAreaFiber?.return?.dependencies.firstContext.memoizedValue;
+    return appState;
+}
+function GetAppActions() {
+    const portraitAreaFiber = Object.entries(document.querySelector(".portrait-area") ?? []).find((a)=>a[0].includes("__reactFiber$"))?.[1];
+    const actions = portraitAreaFiber?.return?.dependencies.firstContext.next.memoizedValue;
+    return actions;
+}
+function GetCurrentVoiceName() {
+    const voiceNameEl = (0, _generalJs.FindHTMLElementsMatching)(".character-area-text")[0];
+    return voiceNameEl?.innerText;
+}
+function GetChunkSizeInBytes() {
+    const chunkSelectEl = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title").find((a)=>a.innerText == "CHUNK:")?.nextSibling?.childNodes[0];
+    const chunkSelectInfo = chunkSelectEl.childNodes[chunkSelectEl.selectedIndex]["innerText"];
+    const chunkSizeInBytes = Number(chunkSelectInfo.match(/, ([0-9]+)\)/)[1]);
+    return chunkSizeInBytes;
+}
+function GetExtraSizeInBytes() {
+    const extraSelectEl = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title").find((a)=>a.innerText == "EXTRA:")?.nextSibling?.childNodes[0];
+    const extraSelectInfo = extraSelectEl.childNodes[extraSelectEl.selectedIndex]["innerText"];
+    const extraSizeInBytes = Number(extraSelectInfo);
+    return extraSizeInBytes;
+}
+function GetRecordButtonsContainer() {
+    const controlAreaTitles = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title");
+    return controlAreaTitles.find((a)=>a.innerText == "REC.")?.nextSibling?.childNodes[0];
+}
+function GetVoiceConversionButtonsContainer() {
+    const passthroughButton = (0, _generalJs.FindHTMLElementsMatching)(".character-area-control-passthru-button-stanby, .character-area-control-passthru-button-active")[0];
+    return passthroughButton.parentElement;
+}
+function StopRegularVoiceConversion() {
+    const stopConversionButton = GetVoiceConversionButtonsContainer().childNodes[1];
+    stopConversionButton.click();
+}
+function StopAudioInputFilePlayback() {
+    const audioInputFileEl = document.querySelector("#audio-test-converted");
+    if (audioInputFileEl == null) return;
+    audioInputFileEl.pause();
+}
+
+},{"./General.js":"adrA1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dVd8y":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "AddButton_ConvertFreshFile", ()=>AddButton_ConvertFreshFile);
@@ -378,66 +472,7 @@ function AddButton_ConvertLoadedFile() {
     container.appendChild(button);
 }
 
-},{"./Utils/General.js":"adrA1","./Utils/AppSpecific.js":"2fzJN","./Utils/Arrays.js":"bxuO0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2fzJN":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-// app state
-// ==========
-// these are of course extremely hacky; just use them for exploration/experimentation
-parcelHelpers.export(exports, "GetAppState", ()=>GetAppState);
-parcelHelpers.export(exports, "GetAppActions", ()=>GetAppActions);
-// ui reading
-// ==========
-parcelHelpers.export(exports, "GetChunkSizeInBytes", ()=>GetChunkSizeInBytes);
-parcelHelpers.export(exports, "GetExtraSizeInBytes", ()=>GetExtraSizeInBytes);
-parcelHelpers.export(exports, "GetRecordButtonsContainer", ()=>GetRecordButtonsContainer);
-parcelHelpers.export(exports, "GetVoiceConversionButtonsContainer", ()=>GetVoiceConversionButtonsContainer);
-// ui actions
-// ==========
-parcelHelpers.export(exports, "StopRegularVoiceConversion", ()=>StopRegularVoiceConversion);
-parcelHelpers.export(exports, "StopAudioInputFilePlayback", ()=>StopAudioInputFilePlayback);
-var _generalJs = require("./General.js");
-function GetAppState() {
-    const portraitAreaFiber = Object.entries(document.querySelector(".portrait-area") ?? []).find((a)=>a[0].includes("__reactFiber$"))?.[1];
-    const appState = portraitAreaFiber?.return?.dependencies.firstContext.memoizedValue;
-    return appState;
-}
-function GetAppActions() {
-    const portraitAreaFiber = Object.entries(document.querySelector(".portrait-area") ?? []).find((a)=>a[0].includes("__reactFiber$"))?.[1];
-    const actions = portraitAreaFiber?.return?.dependencies.firstContext.next.memoizedValue;
-    return actions;
-}
-function GetChunkSizeInBytes() {
-    const chunkSelectEl = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title").find((a)=>a.innerText == "CHUNK:")?.nextSibling?.childNodes[0];
-    const chunkSelectInfo = chunkSelectEl.childNodes[chunkSelectEl.selectedIndex]["innerText"];
-    const chunkSizeInBytes = Number(chunkSelectInfo.match(/, ([0-9]+)\)/)[1]);
-    return chunkSizeInBytes;
-}
-function GetExtraSizeInBytes() {
-    const extraSelectEl = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title").find((a)=>a.innerText == "EXTRA:")?.nextSibling?.childNodes[0];
-    const extraSelectInfo = extraSelectEl.childNodes[extraSelectEl.selectedIndex]["innerText"];
-    const extraSizeInBytes = Number(extraSelectInfo);
-    return extraSizeInBytes;
-}
-function GetRecordButtonsContainer() {
-    const controlAreaTitles = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title");
-    return controlAreaTitles.find((a)=>a.innerText == "REC.")?.nextSibling?.childNodes[0];
-}
-function GetVoiceConversionButtonsContainer() {
-    const passthroughButton = (0, _generalJs.FindHTMLElementsMatching)(".character-area-control-passthru-button-stanby, .character-area-control-passthru-button-active")[0];
-    return passthroughButton.parentElement;
-}
-function StopRegularVoiceConversion() {
-    const stopConversionButton = GetVoiceConversionButtonsContainer().childNodes[1];
-    stopConversionButton.click();
-}
-function StopAudioInputFilePlayback() {
-    const audioInputFileEl = document.querySelector("#audio-test-converted");
-    if (audioInputFileEl == null) return;
-    audioInputFileEl.pause();
-}
-
-},{"./General.js":"adrA1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bxuO0":[function(require,module,exports) {
+},{"./Utils/General.js":"adrA1","./Utils/AppSpecific.js":"2fzJN","./Utils/Arrays.js":"bxuO0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bxuO0":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ArrayBufferToBase64", ()=>ArrayBufferToBase64);

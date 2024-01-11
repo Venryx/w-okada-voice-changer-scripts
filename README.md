@@ -35,5 +35,4 @@ Changes:
 
 ## Tasks
 
-* [ ] Add tweak that causes the RVC quality to be set to "High" again, each time the voice is changed.
 * [ ] Simplify the direct file-conversion functions to avoid the unnecessary i16->f32->16 conversion chain (after receiving the converted audio from the backend).

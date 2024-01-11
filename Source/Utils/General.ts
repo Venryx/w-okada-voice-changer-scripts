@@ -5,6 +5,12 @@ export function FindElementsMatching(selector: string) {
 	return Array.from(document.querySelectorAll(selector));
 }
 
+export function SleepAsync(timeMS): Promise<void> {
+	return new Promise((resolve, reject)=>{
+		setTimeout(resolve, timeMS);
+	});
+}
+
 /** If the dialog is closed/canceled, the promise will just never resolve. */
 export function StartUpload(): Promise<File> {
 	return new Promise((resolve, reject)=>{

@@ -18,6 +18,11 @@ export function GetAppActions() {
 // ui reading
 // ==========
 
+export function GetCurrentVoiceName() {
+	const voiceNameEl = FindHTMLElementsMatching(".character-area-text")[0];
+	return voiceNameEl?.innerText;
+}
+
 export function GetChunkSizeInBytes() {
 	const chunkSelectEl = FindHTMLElementsMatching(".config-sub-area-control-title").find(a=>a.innerText == "CHUNK:")?.nextSibling?.childNodes[0] as HTMLSelectElement;
 	const chunkSelectInfo = chunkSelectEl.childNodes[chunkSelectEl.selectedIndex]["innerText"];
