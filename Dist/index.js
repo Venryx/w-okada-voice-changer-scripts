@@ -147,7 +147,7 @@ var _myStartupTweaksJs = require("./MyStartupTweaks.js");
 var _addDirectFileConvertButtonsJs = require("./AddDirectFileConvertButtons.js");
 var _launcherJs = require("./Launcher.js");
 
-},{"./MyStartupTweaks.js":"dcnev","./Launcher.js":"766Dn","./AddDirectFileConvertButtons.js":"dVd8y"}],"dcnev":[function(require,module,exports) {
+},{"./MyStartupTweaks.js":"dcnev","./AddDirectFileConvertButtons.js":"dVd8y","./Launcher.js":"766Dn"}],"dcnev":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ApplyMyStartupTweaks", ()=>ApplyMyStartupTweaks);
@@ -191,7 +191,33 @@ function ApplyMyStartupTweaks() {
     console.log("Applied startup tweaks.");
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./Utils/General.js":"adrA1"}],"gkKU3":[function(require,module,exports) {
+},{"./Utils/General.js":"adrA1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"adrA1":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "FindHTMLElementsMatching", ()=>FindHTMLElementsMatching);
+parcelHelpers.export(exports, "FindElementsMatching", ()=>FindElementsMatching);
+/** If the dialog is closed/canceled, the promise will just never resolve. */ parcelHelpers.export(exports, "StartUpload", ()=>StartUpload);
+function FindHTMLElementsMatching(selector) {
+    return FindElementsMatching(selector);
+}
+function FindElementsMatching(selector) {
+    return Array.from(document.querySelectorAll(selector));
+}
+function StartUpload() {
+    return new Promise((resolve, reject)=>{
+        const fileInput = document.createElement("input");
+        fileInput.type = "file";
+        fileInput.style.display = "none";
+        fileInput.onchange = (e)=>{
+            var file = fileInput.files[0];
+            if (file) resolve(file);
+        };
+        document.body.appendChild(fileInput);
+        fileInput.click();
+    });
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -221,53 +247,7 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"adrA1":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "FindHTMLElementsMatching", ()=>FindHTMLElementsMatching);
-parcelHelpers.export(exports, "FindElementsMatching", ()=>FindElementsMatching);
-/** If the dialog is closed/canceled, the promise will just never resolve. */ parcelHelpers.export(exports, "StartUpload", ()=>StartUpload);
-function FindHTMLElementsMatching(selector) {
-    return FindElementsMatching(selector);
-}
-function FindElementsMatching(selector) {
-    return Array.from(document.querySelectorAll(selector));
-}
-function StartUpload() {
-    return new Promise((resolve, reject)=>{
-        const fileInput = document.createElement("input");
-        fileInput.type = "file";
-        fileInput.style.display = "none";
-        fileInput.onchange = (e)=>{
-            var file = fileInput.files[0];
-            if (file) resolve(file);
-        };
-        document.body.appendChild(fileInput);
-        fileInput.click();
-    });
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"766Dn":[function(require,module,exports) {
-var _addDirectFileConvertButtonsJs = require("./AddDirectFileConvertButtons.js");
-var _myStartupTweaksJs = require("./MyStartupTweaks.js");
-var _generalJs = require("./Utils/General.js");
-// clear the parcel cache each time our code runs, so that user can keep re-applying modified versions of this code without refreshing the page
-function ClearParcelCache() {
-    Object.keys(window).filter((k)=>k.startsWith("parcelRequire")).forEach((k)=>delete window[k]);
-}
-ClearParcelCache();
-function ClearModificationsFromLastRun() {
-    for (const el of (0, _generalJs.FindHTMLElementsMatching)(".v-added"))el.remove();
-}
-// clear ui modifications from last run
-ClearModificationsFromLastRun();
-// comment lines here to leave only the behavior you want
-(0, _myStartupTweaksJs.ApplyMyStartupTweaks)();
-(0, _addDirectFileConvertButtonsJs.AddButton_ConvertFreshFile)();
-(0, _addDirectFileConvertButtonsJs.AddButton_ConvertLoadedFile)();
-console.log("Finished applying modifications.");
-
-},{"./MyStartupTweaks.js":"dcnev","./Utils/General.js":"adrA1","./AddDirectFileConvertButtons.js":"dVd8y"}],"dVd8y":[function(require,module,exports) {
+},{}],"dVd8y":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "AddButton_ConvertFreshFile", ()=>AddButton_ConvertFreshFile);
@@ -511,6 +491,26 @@ function FlattenFloat32Arrays(chunks) {
     return result;
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["2IaxQ"], "2IaxQ", "parcelRequirebaf6")
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"766Dn":[function(require,module,exports) {
+var _addDirectFileConvertButtonsJs = require("./AddDirectFileConvertButtons.js");
+var _myStartupTweaksJs = require("./MyStartupTweaks.js");
+var _generalJs = require("./Utils/General.js");
+// clear the parcel cache each time our code runs, so that user can keep re-applying modified versions of this code without refreshing the page
+function ClearParcelCache() {
+    Object.keys(window).filter((k)=>k.startsWith("parcelRequire")).forEach((k)=>delete window[k]);
+}
+ClearParcelCache();
+function ClearModificationsFromLastRun() {
+    for (const el of (0, _generalJs.FindHTMLElementsMatching)(".v-added"))el.remove();
+}
+// clear ui modifications from last run
+ClearModificationsFromLastRun();
+// comment lines here to leave only the behavior you want
+(0, _myStartupTweaksJs.ApplyMyStartupTweaks)();
+(0, _addDirectFileConvertButtonsJs.AddButton_ConvertFreshFile)();
+(0, _addDirectFileConvertButtonsJs.AddButton_ConvertLoadedFile)();
+console.log("Finished applying modifications.");
+
+},{"./AddDirectFileConvertButtons.js":"dVd8y","./MyStartupTweaks.js":"dcnev","./Utils/General.js":"adrA1"}]},["2IaxQ"], "2IaxQ", "parcelRequirebaf6")
 
 //# sourceMappingURL=index.js.map
