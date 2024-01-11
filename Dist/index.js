@@ -251,15 +251,7 @@ function StartUpload() {
 var _addDirectFileConvertButtonsJs = require("./AddDirectFileConvertButtons.js");
 var _myStartupTweaksJs = require("./MyStartupTweaks.js");
 var _generalJs = require("./Utils/General.js");
-// use this to reset before each paste (type "r" in console, hit enter, then redo the paste+enter)
-/*if (window["r"] == null) {
-	Object.defineProperty(window, "r", {
-		get() {
-			Object.keys(window).filter(k=>k.startsWith("parcelRequire")).forEach(k=>delete window[k]);
-			return "reset";
-		},
-	});
-}*/ // actually, just reset it automatically!
+// clear the parcel cache each time our code runs, so that user can keep re-applying modified versions of this code without refreshing the page
 function ClearParcelCache() {
     Object.keys(window).filter((k)=>k.startsWith("parcelRequire")).forEach((k)=>delete window[k]);
 }
@@ -348,13 +340,7 @@ async function Convert(fileBlob, flushStartWithXChunks = 1) {
         ]); // make space
     }
     const audioBufferAsInt16PCMArrayBuffer = (0, _arraysJs.Float32ArrayToInt16Array)(audioBufferAsF32Array);
-    /*if (flushLengthInInt16Array > 0) {
-		const view = new Int16Array(audioBufferAsInt16PCMArrayBuffer);
-		// make a copy of existing data, shifted X seconds to the right (commented; not needed now that offset is supplied to Float32ArrayToInt16Array above)
-		//view.set(view, flushLengthInInt16Array);
-		// now in the newly-opened space, insert zeroes (for silence)
-		view.fill(0, 0, flushLengthInInt16Array);
-	}*/ const f32DataSubarrays = [];
+    const f32DataSubarrays = [];
     for(let i = 0; i < audioBufferAsInt16PCMArrayBuffer.byteLength; i += chunkSize){
         const audioBufferRawAsBase64Str = (0, _arraysJs.ArrayBufferToBase64)(audioBufferAsInt16PCMArrayBuffer.slice(i, i + chunkSize));
         const requestBody = JSON.stringify({

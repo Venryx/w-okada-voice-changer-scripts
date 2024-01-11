@@ -70,14 +70,6 @@ async function Convert(fileBlob: Blob, flushStartWithXChunks = 1) {
 
 	const audioBufferAsInt16PCMArrayBuffer = Float32ArrayToInt16Array(audioBufferAsF32Array);
 
-	/*if (flushLengthInInt16Array > 0) {
-		const view = new Int16Array(audioBufferAsInt16PCMArrayBuffer);
-		// make a copy of existing data, shifted X seconds to the right (commented; not needed now that offset is supplied to Float32ArrayToInt16Array above)
-		//view.set(view, flushLengthInInt16Array);
-		// now in the newly-opened space, insert zeroes (for silence)
-		view.fill(0, 0, flushLengthInInt16Array);
-	}*/
-
 	const f32DataSubarrays = [] as Float32Array[];
 	for (let i = 0; i < audioBufferAsInt16PCMArrayBuffer.byteLength; i += chunkSize) {
 		const audioBufferRawAsBase64Str = ArrayBufferToBase64(audioBufferAsInt16PCMArrayBuffer.slice(i, i + chunkSize));
