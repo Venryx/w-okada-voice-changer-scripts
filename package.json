@@ -1,0 +1,33 @@
+{
+	"name": "w-okada-voice-changer-scripts",
+	"description": "Some scripts for the w-okada voice-changer. (run in dev-tools and/or chrome userscripts)",
+	"version": "0.0.1",
+	"author": "Venryx (https://venryx.com)",
+	"main_disabled": "Dist/index.js",
+	"typings_disabled": "Dist/index.d.ts",
+	"type_disabled": "module",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Venryx/w-okada-voice-changer-scripts.git"
+	},
+	"parcel_target1": "Dist/index.js",
+	"targets": {
+	  "parcel_target1": {
+			"outputFormat": "global"
+		}
+	},
+	"scripts": {
+		"dev_old": "tsc --watch",
+		"dist_old": "tsc",
+		"dev": "parcel watch Source/index.ts --no-hmr"
+	},
+	"devDependencies": {
+		"eslint": "^7.30.0",
+		"eslint-config-vbase": "1.0.13",
+		"typescript": "5.3.3"
+	},
+	"dependencies": {
+		"parcel": "^2.11.0"
+	}
+}

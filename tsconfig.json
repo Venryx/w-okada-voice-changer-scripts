@@ -1,0 +1,35 @@
+{
+	"compilerOptions": {
+		"rootDir": "Source",
+		"module": "System",
+		"outFile": "Dist/Test1.js",
+		"moduleResolution": "node",
+		"target": "ES2018",
+		"jsx": "react",
+		"noImplicitAny": false,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true, // doesn't modify output, *or* own import code (it's just for type-checking)
+		"outDir": "Dist",
+		"declaration": true,
+		//"declarationDir": "Dist",
+
+		//"useDefineForClassFields": true, // needed for mobx @observable
+		"lib": ["es6", "dom", "esnext"], // fixes AsyncIterator type-missing issue
+
+		//"strict": true, // enables all of the below (other than noImplicitReturns)
+		//"noImplicitAny": true,
+		//"noImplicitThis": true,
+		//"noImplicitReturns": true,
+		"alwaysStrict": true,
+		//"strictBindCallApply": true,
+		"strictNullChecks": true,
+		//"strictFunctionTypes": true,
+		//"strictPropertyInitialization": true,
+	},
+	"include": [
+		"Typings/**/*.d.ts",
+		"Source/**/*.ts",
+		"Source/**/*.tsx"
+	],
+	"compileOnSave": true
+}
