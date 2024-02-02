@@ -11,7 +11,7 @@ Some scripts for the w-okada voice-changer. (run in dev-tools and/or chrome user
 
 ### Chrome user-scripts
 
-1) Open the client frontend in your regular browser, by going to `http://localhost:18888` or `http://127.0.0.1:18888`.
+1) Open the client frontend in your regular browser, by going to `http://127.0.0.1:18888` (or `http://localhost:18888`).
 2) Add a user-script for the site, using an extension such as Grease Monkey or Violent Monkey, with its contents being that of the `Dist/index.js` file in this repo. (not yet tested, but will likely work)
 
 ## Scripts

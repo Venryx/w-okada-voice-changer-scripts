@@ -155,7 +155,7 @@ var _appSpecificJs = require("./Utils/AppSpecific.js");
 var _generalJs = require("./Utils/General.js");
 async function SetRVCQuality(quality) {
     console.log("Setting RVC quality to:", quality);
-    await fetch("http://localhost:18888/update_settings", {
+    await fetch("/update_settings", {
         method: "POST",
         mode: "cors",
         headers: {
@@ -215,7 +215,7 @@ function ApplyMyStartupTweaks() {
     console.log("Applied startup tweaks.");
 }
 
-},{"./Utils/General.js":"adrA1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./Utils/AppSpecific.js":"2fzJN"}],"adrA1":[function(require,module,exports) {
+},{"./Utils/General.js":"adrA1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"adrA1":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "FindHTMLElementsMatching", ()=>FindHTMLElementsMatching);
@@ -277,71 +277,7 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"2fzJN":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-// app state
-// ==========
-// these are of course extremely hacky; just use them for exploration/experimentation
-parcelHelpers.export(exports, "GetAppState", ()=>GetAppState);
-parcelHelpers.export(exports, "GetAppActions", ()=>GetAppActions);
-// ui reading
-// ==========
-parcelHelpers.export(exports, "GetCurrentVoiceName", ()=>GetCurrentVoiceName);
-parcelHelpers.export(exports, "GetChunkSizeInBytes", ()=>GetChunkSizeInBytes);
-parcelHelpers.export(exports, "GetExtraSizeInBytes", ()=>GetExtraSizeInBytes);
-parcelHelpers.export(exports, "GetRecordButtonsContainer", ()=>GetRecordButtonsContainer);
-parcelHelpers.export(exports, "GetVoiceConversionButtonsContainer", ()=>GetVoiceConversionButtonsContainer);
-// ui actions
-// ==========
-parcelHelpers.export(exports, "StopRegularVoiceConversion", ()=>StopRegularVoiceConversion);
-parcelHelpers.export(exports, "StopAudioInputFilePlayback", ()=>StopAudioInputFilePlayback);
-var _generalJs = require("./General.js");
-function GetAppState() {
-    const portraitAreaFiber = Object.entries(document.querySelector(".portrait-area") ?? []).find((a)=>a[0].includes("__reactFiber$"))?.[1];
-    const appState = portraitAreaFiber?.return?.dependencies.firstContext.memoizedValue;
-    return appState;
-}
-function GetAppActions() {
-    const portraitAreaFiber = Object.entries(document.querySelector(".portrait-area") ?? []).find((a)=>a[0].includes("__reactFiber$"))?.[1];
-    const actions = portraitAreaFiber?.return?.dependencies.firstContext.next.memoizedValue;
-    return actions;
-}
-function GetCurrentVoiceName() {
-    const voiceNameEl = (0, _generalJs.FindHTMLElementsMatching)(".character-area-text")[0];
-    return voiceNameEl?.innerText;
-}
-function GetChunkSizeInBytes() {
-    const chunkSelectEl = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title").find((a)=>a.innerText == "CHUNK:")?.nextSibling?.childNodes[0];
-    const chunkSelectInfo = chunkSelectEl.childNodes[chunkSelectEl.selectedIndex]["innerText"];
-    const chunkSizeInBytes = Number(chunkSelectInfo.match(/, ([0-9]+)\)/)[1]);
-    return chunkSizeInBytes;
-}
-function GetExtraSizeInBytes() {
-    const extraSelectEl = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title").find((a)=>a.innerText == "EXTRA:")?.nextSibling?.childNodes[0];
-    const extraSelectInfo = extraSelectEl.childNodes[extraSelectEl.selectedIndex]["innerText"];
-    const extraSizeInBytes = Number(extraSelectInfo);
-    return extraSizeInBytes;
-}
-function GetRecordButtonsContainer() {
-    const controlAreaTitles = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title");
-    return controlAreaTitles.find((a)=>a.innerText == "REC.")?.nextSibling?.childNodes[0];
-}
-function GetVoiceConversionButtonsContainer() {
-    const passthroughButton = (0, _generalJs.FindHTMLElementsMatching)(".character-area-control-passthru-button-stanby, .character-area-control-passthru-button-active")[0];
-    return passthroughButton.parentElement;
-}
-function StopRegularVoiceConversion() {
-    const stopConversionButton = GetVoiceConversionButtonsContainer().childNodes[1];
-    stopConversionButton.click();
-}
-function StopAudioInputFilePlayback() {
-    const audioInputFileEl = document.querySelector("#audio-test-converted");
-    if (audioInputFileEl == null) return;
-    audioInputFileEl.pause();
-}
-
-},{"./General.js":"adrA1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dVd8y":[function(require,module,exports) {
+},{}],"dVd8y":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "AddButton_ConvertFreshFile", ()=>AddButton_ConvertFreshFile);
@@ -421,7 +357,7 @@ async function Convert(fileBlob, flushStartWithXChunks = 1) {
             timestamp: Date.now(),
             buffer: audioBufferRawAsBase64Str
         });
-        const resp = await fetch("http://127.0.0.1:18888/test", {
+        const resp = await fetch("/test", {
             method: "POST",
             headers: {
                 "content-type": "application/json"
@@ -484,7 +420,71 @@ function AddButton_ConvertLoadedFile() {
     container.appendChild(button);
 }
 
-},{"./Utils/General.js":"adrA1","./Utils/AppSpecific.js":"2fzJN","./Utils/Arrays.js":"bxuO0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bxuO0":[function(require,module,exports) {
+},{"./Utils/General.js":"adrA1","./Utils/AppSpecific.js":"2fzJN","./Utils/Arrays.js":"bxuO0","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"2fzJN":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// app state
+// ==========
+// these are of course extremely hacky; just use them for exploration/experimentation
+parcelHelpers.export(exports, "GetAppState", ()=>GetAppState);
+parcelHelpers.export(exports, "GetAppActions", ()=>GetAppActions);
+// ui reading
+// ==========
+parcelHelpers.export(exports, "GetCurrentVoiceName", ()=>GetCurrentVoiceName);
+parcelHelpers.export(exports, "GetChunkSizeInBytes", ()=>GetChunkSizeInBytes);
+parcelHelpers.export(exports, "GetExtraSizeInBytes", ()=>GetExtraSizeInBytes);
+parcelHelpers.export(exports, "GetRecordButtonsContainer", ()=>GetRecordButtonsContainer);
+parcelHelpers.export(exports, "GetVoiceConversionButtonsContainer", ()=>GetVoiceConversionButtonsContainer);
+// ui actions
+// ==========
+parcelHelpers.export(exports, "StopRegularVoiceConversion", ()=>StopRegularVoiceConversion);
+parcelHelpers.export(exports, "StopAudioInputFilePlayback", ()=>StopAudioInputFilePlayback);
+var _generalJs = require("./General.js");
+function GetAppState() {
+    const portraitAreaFiber = Object.entries(document.querySelector(".portrait-area") ?? []).find((a)=>a[0].includes("__reactFiber$"))?.[1];
+    const appState = portraitAreaFiber?.return?.dependencies.firstContext.memoizedValue;
+    return appState;
+}
+function GetAppActions() {
+    const portraitAreaFiber = Object.entries(document.querySelector(".portrait-area") ?? []).find((a)=>a[0].includes("__reactFiber$"))?.[1];
+    const actions = portraitAreaFiber?.return?.dependencies.firstContext.next.memoizedValue;
+    return actions;
+}
+function GetCurrentVoiceName() {
+    const voiceNameEl = (0, _generalJs.FindHTMLElementsMatching)(".character-area-text")[0];
+    return voiceNameEl?.innerText;
+}
+function GetChunkSizeInBytes() {
+    const chunkSelectEl = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title").find((a)=>a.innerText == "CHUNK:")?.nextSibling?.childNodes[0];
+    const chunkSelectInfo = chunkSelectEl.childNodes[chunkSelectEl.selectedIndex]["innerText"];
+    const chunkSizeInBytes = Number(chunkSelectInfo.match(/, ([0-9]+)\)/)[1]);
+    return chunkSizeInBytes;
+}
+function GetExtraSizeInBytes() {
+    const extraSelectEl = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title").find((a)=>a.innerText == "EXTRA:")?.nextSibling?.childNodes[0];
+    const extraSelectInfo = extraSelectEl.childNodes[extraSelectEl.selectedIndex]["innerText"];
+    const extraSizeInBytes = Number(extraSelectInfo);
+    return extraSizeInBytes;
+}
+function GetRecordButtonsContainer() {
+    const controlAreaTitles = (0, _generalJs.FindHTMLElementsMatching)(".config-sub-area-control-title");
+    return controlAreaTitles.find((a)=>a.innerText == "REC.")?.nextSibling?.childNodes[0];
+}
+function GetVoiceConversionButtonsContainer() {
+    const passthroughButton = (0, _generalJs.FindHTMLElementsMatching)(".character-area-control-passthru-button-stanby, .character-area-control-passthru-button-active")[0];
+    return passthroughButton.parentElement;
+}
+function StopRegularVoiceConversion() {
+    const stopConversionButton = GetVoiceConversionButtonsContainer().childNodes[1];
+    stopConversionButton.click();
+}
+function StopAudioInputFilePlayback() {
+    const audioInputFileEl = document.querySelector("#audio-test-converted");
+    if (audioInputFileEl == null) return;
+    audioInputFileEl.pause();
+}
+
+},{"./General.js":"adrA1","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"bxuO0":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "ArrayBufferToBase64", ()=>ArrayBufferToBase64);

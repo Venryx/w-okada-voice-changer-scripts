@@ -3,7 +3,7 @@ import {FindHTMLElementsMatching, SleepAsync} from "./Utils/General.js";
 
 async function SetRVCQuality(quality: 0 | 1) {
 	console.log("Setting RVC quality to:", quality);
-	await fetch("http://localhost:18888/update_settings", {
+	await fetch("/update_settings", {
 		method: "POST", mode: "cors",
 		headers: {
 			"content-type": "multipart/form-data; boundary=----WebKitFormBoundaryuhTAAoBfkhLFQciO",

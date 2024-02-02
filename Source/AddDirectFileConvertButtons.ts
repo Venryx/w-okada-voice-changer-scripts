@@ -78,7 +78,7 @@ async function Convert(fileBlob: Blob, flushStartWithXChunks = 1) {
 			timestamp: Date.now(),
 			buffer: audioBufferRawAsBase64Str,
 		});
-		const resp = await fetch("http://127.0.0.1:18888/test", {
+		const resp = await fetch("/test", {
 			method: "POST",
 			headers: {
 				"content-type": "application/json",
